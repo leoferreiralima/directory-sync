@@ -46,7 +46,7 @@ func main() {
 
 			log.Printf("Event.Name: %s\n", event.Name)
 
-			ops[sourceFolder].processEvent(event)
+			ops[sourceFolder].ProcessEvent(event)
 
 			log.Printf("Event (%s): %s (Source) -> %s (Destination)\n", event.Op, event.Name, destFolder)
 
@@ -59,18 +59,17 @@ func main() {
 	}
 }
 
-func (f *FileOps) processEvent(event fsnotify.Event) {
+func (f *FileOps) ProcessEvent(event fsnotify.Event) {
 	switch event.Op {
-	case fsnotify.Create, fsnotify.Write, fsnotify.Rename:
-		if f.isDirectory(event.Name) {
-			f.createFolder(event.Name)
+	case fsnotify.Create, fsnotify.Write:
+		if f.IsDirectory(event.Name) {
+			f.CreateFolder(event.Name)
 		} else {
 			f.CopyFile(event.Name)
 		}
-	case fsnotify.Remove:
-		if f.isDirectory(event.Name) {
-			f.deleteFolder(event.Name)
-
+	case fsnotify.Remove, fsnotify.Rename:
+		if f.IsDirectory(event.Name) {
+			f.DeleteFolder(event.Name)
 		} else {
 			f.DeleteFile(event.Name)
 		}
