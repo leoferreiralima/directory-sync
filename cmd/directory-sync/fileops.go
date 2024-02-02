@@ -30,7 +30,7 @@ func (f *FileOps) CopyFile(src string) {
 	}
 	defer srcFile.Close()
 
-	destFile := filepath.Join(f.destFolder, f.getFilePath(src))
+	destFile := filepath.Join(f.destFolder, f.GetFilePath(src))
 	dest, err := os.Create(destFile)
 	if err != nil {
 		log.Println("Error creating destination file:", err)
@@ -48,7 +48,7 @@ func (f *FileOps) CopyFile(src string) {
 }
 
 func (f *FileOps) DeleteFile(src string) {
-	destFile := filepath.Join(f.destFolder, f.getFilePath(src))
+	destFile := filepath.Join(f.destFolder, f.GetFilePath(src))
 	err := os.Remove(destFile)
 	if err != nil {
 		log.Println("Error deleting file:", err)
@@ -58,7 +58,7 @@ func (f *FileOps) DeleteFile(src string) {
 	log.Printf("Deleted: %s\n", destFile)
 }
 
-func (f *FileOps) isDirectory(path string) bool {
+func (f *FileOps) IsDirectory(path string) bool {
 	fileInfo, err := os.Stat(path)
 	if err != nil {
 		log.Println("Error checking if directory:", err)
@@ -67,8 +67,8 @@ func (f *FileOps) isDirectory(path string) bool {
 	return fileInfo.IsDir()
 }
 
-func (f *FileOps) createFolder(src string) {
-	dest := filepath.Join(f.destFolder, f.getFilePath(src))
+func (f *FileOps) CreateFolder(src string) {
+	dest := filepath.Join(f.destFolder, f.GetFilePath(src))
 	err := os.MkdirAll(dest, os.ModePerm)
 	if err != nil {
 		log.Println("Error creating folder:", err)
@@ -79,8 +79,8 @@ func (f *FileOps) createFolder(src string) {
 	log.Printf("Created folder: %s -> %s\n", src, dest)
 }
 
-func (f *FileOps) deleteFolder(src string) {
-	dest := filepath.Join(f.destFolder, f.getFilePath(src))
+func (f *FileOps) DeleteFolder(src string) {
+	dest := filepath.Join(f.destFolder, f.GetFilePath(src))
 	err := os.RemoveAll(dest)
 	if err != nil {
 		log.Println("Error deleting folder:", err)
@@ -91,6 +91,6 @@ func (f *FileOps) deleteFolder(src string) {
 	log.Printf("Deleted folder: %s -> %s\n", src, dest)
 }
 
-func (f *FileOps) getFilePath(src string) string {
+func (f *FileOps) GetFilePath(src string) string {
 	return strings.Replace(src, strings.Replace(f.sourceFolder, ".\\", "", 1), "", 1)
 }
