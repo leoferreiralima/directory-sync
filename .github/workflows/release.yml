@@ -28,7 +28,7 @@ jobs:
       
     - name: Build
       if: ${{ matrix.os != 'windows-latest' }}
-      run: go build -o ./bin/dsync.${{ matrix.os }} ./cmd/directory-sync ]
+      run: go build -o ./bin/dsync.${{ matrix.os }} ./cmd/directory-sync
       
     - name: 'Upload Artifact'
       uses: xresloader/upload-to-github-release@v1
