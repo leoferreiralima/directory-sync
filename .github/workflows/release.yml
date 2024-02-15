@@ -1,0 +1,36 @@
+name: Build and Upload
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Build for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.x'  # Set the Go version you need
+
+    - name: Build
+      run: go build -o dsync.${{ matrix.os }} ./cmd/directory-sync
+
+    - name: Upload Binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: https://uploads.github.com/repos/${{ github.repository }}/releases/${{ github.event.release.id }}/assets
+        asset_path: ./dsync.${{ matrix.os }}
+        asset_name: dsync.${{ matrix.os }}
+        asset_content_type: application/octet-stream
