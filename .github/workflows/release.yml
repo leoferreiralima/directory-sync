@@ -5,9 +5,9 @@ on:
     types: [published]
 
 jobs:
-  build:
+  build-linux:
     name: Build for ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -30,7 +30,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: https://uploads.github.com/repos/${{ github.repository }}/releases/${{ github.event.release.id }}/assets
+        upload_url: ${{ github.event.release.upload_url }}
         asset_path: ./dsync.${{ matrix.os }}
         asset_name: dsync.${{ matrix.os }}
         asset_content_type: application/octet-stream
