@@ -1,9 +1,8 @@
 name: Build and Release
 
 on:
-  push:
-    tags:
-      - 'v*' # Trigger on tags like v1.0.0
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -19,25 +18,14 @@ jobs:
         go-version: '1.x'  # Set the Go version you need
 
     - name: Build
-      run: go build -o dsync.${{ matrix.os }} ./cmd/directory-sync
+      run: go build -o ./bin/dsync.${{ matrix.os }} ./cmd/directory-sync
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
+    - name: 'Upload Artifact'
+      uses: xresloader/upload-to-github-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: false
-
-    - name: Upload Binary
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dsync.${{ matrix.os }}
-        asset_name: dsync.${{ matrix.os }}
-        asset_content_type: application/octet-stream
+        file: "./bin/**"
+        release_id: ${{ github.event.release.id }}
+        overwrite: true
+        verbose: true
