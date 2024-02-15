@@ -1,17 +1,13 @@
-name: Build and Upload
+name: Build and Release
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*' # Trigger on tags like v1.0.0
 
 jobs:
-  build-linux:
-    name: Build for ${{ matrix.os }}
+  build:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
     - name: Checkout code
@@ -25,12 +21,23 @@ jobs:
     - name: Build
       run: go build -o dsync.${{ matrix.os }} ./cmd/directory-sync
 
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
     - name: Upload Binary
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./dsync.${{ matrix.os }}
-        asset_name: dsync.${{ matrix.os }}
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./myapp_${{ matrix.os }}
+        asset_name: myapp_${{ matrix.os }}
         asset_content_type: application/octet-stream
