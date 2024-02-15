@@ -22,13 +22,14 @@ jobs:
       with:
         go-version: '1.x'  # Set the Go version you need
 
+    - name: Build Windows
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: go build -o ./bin/dsync.${{ matrix.os }}.exe ./cmd/directory-sync
+      
     - name: Build
-      run: |
-          if [ ${{ matrix.os }} == 'windows-latest' ]; then
-            go build -o ./bin/dsync.${{ matrix.os }}.exe ./cmd/directory-sync
-          else
-            go build -o ./bin/dsync.${{ matrix.os }} ./cmd/directory-sync
-          fi
+      if: ${{ matrix.os != 'windows-latest' }}
+      run: go build -o ./bin/dsync.${{ matrix.os }} ./cmd/directory-sync ]
+      
     - name: 'Upload Artifact'
       uses: xresloader/upload-to-github-release@v1
       env:
