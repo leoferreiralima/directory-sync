@@ -6,7 +6,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: Build for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
     - name: Checkout code
@@ -18,7 +23,7 @@ jobs:
         go-version: '1.x'  # Set the Go version you need
 
     - name: Build
-      run: go build -o ./bin/dsync ./cmd/directory-sync
+      run: go build -o ./bin/dsync.${{ matrix.os }} ./cmd/directory-sync
 
     - name: 'Upload Artifact'
       uses: xresloader/upload-to-github-release@v1
